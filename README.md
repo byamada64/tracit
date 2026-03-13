@@ -143,6 +143,7 @@ Services: Frontend `:3000` · API `:5200` · n8n `:5678`
 **Azure Infrastructure (Terraform)**
 
 ```bash
+Provision Azure infrastructure using Terraform:
 cd terraform
 export TF_VAR_postgres_admin_password="your-password"
 terraform init
