@@ -6,35 +6,40 @@
 
 **A containerized, multi-service job tracking platform demonstrating a full DevOps and cloud infrastructure stack — from self-hosted Docker to Azure Hub-and-Spoke VNet design.**
 
-[Terraform] [Azure] [Docker] [Cloudflare]
-[![Terraform](https://img.shields.io/badge/IaC-Terraform-7B42BC?logo=terraform&logoColor=white)](https://terraform.io)
-[![Azure](https://img.shields.io/badge/Cloud-Azure-0078D4?logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com)
-[![Docker](https://img.shields.io/badge/Containers-Docker-2496ED?logo=docker&logoColor=white)](https://docker.com)
+[Terraform] [Azure] [Docker] [Cloudflare]  
+[![Terraform](https://img.shields.io/badge/IaC-Terraform-7B42BC?logo=terraform&logoColor=white)](https://terraform.io)  
+[![Azure](https://img.shields.io/badge/Cloud-Azure-0078D4?logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com)  
+[![Docker](https://img.shields.io/badge/Containers-Docker-2496ED?logo=docker&logoColor=white)](https://docker.com)  
 [![Cloudflare](https://img.shields.io/badge/DNS%2FSSL-Cloudflare-F38020?logo=cloudflare&logoColor=white)](https://cloudflare.com)
 
 ---
 
-## Key Architecture Goals
+# Project Overview
 
-• Demonstrate a full DevOps platform lifecycle from self-hosted infrastructure to cloud deployment.
+TracIT is a containerized multi-service platform built on a Synology NAS and designed for migration to Azure. The project demonstrates how a lightweight self-hosted system can evolve into a production-style cloud architecture using Infrastructure-as-Code, containerized microservices, and enterprise networking patterns.
 
-• Use containerized microservices to separate frontend, API, automation, and persistence layers.
+The platform simulates a real-world DevOps lifecycle:
 
-• Implement secure ingress using Cloudflare edge protection and reverse proxy routing.
+Self-Hosted Docker → Secure Edge Ingress → Containerized Services → Infrastructure-as-Code → Azure Hub-and-Spoke Cloud Architecture.
 
-• Design a cloud-ready topology based on Azure Hub-and-Spoke networking with private endpoints.
-
-• Manage infrastructure with Terraform and CI/CD pipelines via GitHub Actions.
-
-• Maintain portability between on-prem Docker environments and Azure container services.
-
-## Overview
-
-TracIT is a containerized multi-service platform built on a Synology NAS and designed for migration to Azure. It demonstrates a complete production-pattern infrastructure: Cloudflare edge → reverse proxy → Docker bridge network → PostgreSQL + Redis persistence + n8n workflow automation. The Azure target architecture follows a **Hub-and-Spoke VNet model** with centralized firewall egress, private endpoints for all data layer services, and Terraform-managed infrastructure. CI/CD is implemented via GitHub Actions with staging gates and container image promotion through Azure Container Registry.
+The end goal is a **cost-optimized cloud deployment capable of running ephemeral workloads while maintaining enterprise-grade network isolation and security controls.**
 
 ---
 
-## Architecture
+# Key Architecture Goals
+
+• Demonstrate a full DevOps platform lifecycle from self-hosted infrastructure to cloud deployment.  
+• Use containerized microservices to separate frontend, API, automation, and persistence layers.  
+• Implement secure ingress using Cloudflare edge protection and reverse proxy routing.  
+• Design a cloud-ready topology based on Azure Hub-and-Spoke networking with private endpoints.  
+• Manage infrastructure with Terraform and CI/CD pipelines via GitHub Actions.  
+• Maintain portability between on-prem Docker environments and Azure container services.
+
+---
+
+# System Architecture
+
+## Self-Hosted Deployment
 
 ```
 Internet → Cloudflare (DNS + SSL + DDoS) → Synology NAS Firewall + DDNS
@@ -60,62 +65,66 @@ All cross-spoke traffic is force-tunneled through the hub firewall via User-Defi
 
 ---
 
-## Design Decisions
+# Design Decisions
 
-**Hub-and-Spoke over flat VNet**
-- Single firewall inspection point for all egress; mirrors enterprise Cloud Adoption Framework patterns
-- 10.x.0.0/16 increments per spoke — non-overlapping, room to expand without redesigning
+## Hub-and-Spoke over Flat VNet
+- Single firewall inspection point for all egress
+- Mirrors enterprise Cloud Adoption Framework patterns
+- Non-overlapping address ranges allow future expansion
 
-**NVA over Azure Firewall**
-- Azure Firewall costs ~$140/mo — overkill for a portfolio project
-- Hardened Ubuntu 22.04 VM (B1s, ~$8/mo) with `iptables` masquerading and Kernel IP Forwarding achieves the same forced-egress result at a fraction of the cost
+## NVA over Azure Firewall
+- Azure Firewall ≈ $140/month
+- Hardened Ubuntu VM (B1s ≈ $8/month) with `iptables` achieves equivalent routing behavior
 
-**Private Endpoints for PostgreSQL, Service Endpoints for Key Vault**
-- PostgreSQL: Private Endpoint ($7.50/mo) — data layer warrants maximum isolation
-- Key Vault: Service Endpoint + VNet ACLs (free) — access restricted to hub and compute subnets; acceptable tradeoff at this stage
+## Private Endpoints vs Service Endpoints
+- PostgreSQL uses Private Endpoint for maximum isolation
+- Key Vault uses Service Endpoint with VNet ACLs for cost efficiency
 
-**Cloudflare in front of everything**
-- Real home IP never exposed; Cloudflare absorbs DDoS at the edge
-- Full (Strict) SSL mode — encrypted on both legs, origin validated via Let's Encrypt cert on DSM
+## Cloudflare Edge Protection
+- Hides real origin IP
+- Provides DNS, SSL termination, and DDoS protection
+- Full (Strict) SSL ensures encryption end-to-end
 
-**Docker Compose over Kubernetes**
-- Five services on a single host; Kubernetes overhead is not justified
-- Custom named bridge network (`tracit_net`) required for container DNS resolution — default bridge does not support it
+## Docker Compose over Kubernetes
+- Five services on one host does not justify Kubernetes complexity
+- Named Docker bridge network (`tracit_net`) provides container DNS
 
-**n8n for automation**
-- Self-hostable, visual workflow editor, broad integration support
-- Faster iteration on automation workflows than custom Node.js scripts
+## n8n for Automation
+- Visual workflow engine
+- Rapid integration capability
+- Faster iteration than custom scripts
 
 ---
 
-## Lessons Learned
+# Lessons Learned
 
-**Asymmetric routing in Hub-and-Spoke**
-- Ping worked Hub → Spoke but failed Spoke → Hub
-- Root cause: missing return route in the Hub route table; NVA received the packet but had no path back to the specific Spoke subnet
-- Fix: added explicit return routes; now use Azure Effective Routes to validate hop-by-hop before assuming misconfiguration
+## Asymmetric Routing in Hub-and-Spoke
+Hub → Spoke traffic worked but return traffic failed due to missing route tables.
 
-**Docker container DNS only works on user-defined networks**
-- Default bridge network does not support service discovery by container name
-- Wasted half a day debugging connection refused errors; solution is always define a named network in `docker-compose.yml`
+Fix: explicit return routes and verification using Azure Effective Routes.
 
-**Azure subnet naming is non-negotiable**
-- Azure Firewall requires `AzureFirewallSubnet`, Bastion requires `AzureBastionSubnet`, VPN Gateway requires `GatewaySubnet`
-- Spent an hour on failed deployments before finding this; subnet names are validated before resource creation
+## Docker DNS Limitations
+Service discovery only works on user-defined networks, not the default bridge.
 
-**Overlapping VNet address spaces break peering**
-- Initially designed two spokes with overlapping `10.0.x.x` ranges
-- Azure blocks peering of overlapping VNets; required destroying and recreating both VNets
-- Lesson: plan the full IP address space on paper before creating any VNet
+## Azure Subnet Naming Rules
+Certain services require reserved subnet names:
 
-**SSL mode confusion with Cloudflare**
-- Flexible mode encrypts user → Cloudflare only; origin leg is plain HTTP
-- Full (Strict) requires a valid cert on the origin; switching modes without one causes handshake failures
-- Lesson: understand all three modes before enabling anything
+AzureFirewallSubnet  
+AzureBastionSubnet  
+GatewaySubnet
 
-**Docker volume loss from `down -v`**
-- `docker compose down -v` deletes named volumes; ran it by accident and lost a week of test data
-- Now: `pg_dump` runs on cron nightly, output stored off the Docker host
+## VNet Address Planning
+Overlapping address ranges prevent VNet peering.
+
+Lesson: plan the entire IP space before deployment.
+
+## Cloudflare SSL Modes
+Flexible vs Full vs Full-Strict significantly impact origin behavior.
+
+## Docker Volume Loss
+`docker compose down -v` deletes named volumes.
+
+Mitigation: nightly automated `pg_dump` backups.
 
 ---
 
