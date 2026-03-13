@@ -1,0 +1,198 @@
+/* ============================================================
+   SIDEBAR COMPONENT STYLES
+   ============================================================ */
+
+/* Base Sidebar Container */
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  height: 100vh;
+  padding: 24px 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  overflow-y: auto;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+  margin-bottom: 32px;
+}
+
+.sidebar-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+/* Sidebar Navigation */
+.sidebar-nav {
+  flex: 1;
+}
+
+.sidebar-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar-list-item {
+  margin-bottom: 6px;
+}
+
+/* Sidebar Links */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  padding: 12px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #ffffff;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-link:hover {
+  background-color: #333333;
+}
+
+.sidebar-link:focus {
+  outline: 2px solid #4a9eff;
+  outline-offset: 2px;
+}
+
+.sidebar-link-active {
+  background-color: #333333;
+  font-weight: 600;
+}
+
+/* Sidebar Icon */
+.sidebar-icon {
+  font-size: 20px;
+  margin-right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+}
+
+/* Sidebar Text */
+.sidebar-text {
+  flex: 1;
+}
+
+/* ============================================================
+   RESPONSIVE BREAKPOINTS
+   ============================================================ */
+
+/* Tablet: 768px and below */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 240px;
+    min-width: 240px;
+    padding: 20px 12px;
+  }
+
+  .sidebar-title {
+    font-size: 20px;
+  }
+
+  .sidebar-link {
+    font-size: 16px;
+    padding: 10px 8px;
+  }
+
+  .sidebar-icon {
+    font-size: 18px;
+    margin-right: 10px;
+    min-width: 20px;
+  }
+}
+
+/* Mobile: 640px and below */
+@media (max-width: 640px) {
+  .sidebar {
+    width: 100%;
+    min-width: 100%;
+    transform: translateX(-100%);
+    padding: 20px 16px;
+  }
+
+  .sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-title {
+    font-size: 20px;
+    margin-bottom: 24px;
+  }
+
+  .sidebar-link {
+    font-size: 16px;
+    padding: 12px 10px;
+  }
+
+  .sidebar-icon {
+    font-size: 18px;
+    margin-right: 12px;
+  }
+}
+
+/* Small Mobile: 480px and below */
+@media (max-width: 480px) {
+  .sidebar {
+    padding: 16px 12px;
+  }
+
+  .sidebar-title {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .sidebar-link {
+    font-size: 15px;
+    padding: 10px 8px;
+  }
+
+  .sidebar-icon {
+    font-size: 16px;
+    margin-right: 10px;
+    min-width: 18px;
+  }
+}
+
+/* ============================================================
+   ACCESSIBILITY & INTERACTIONS
+   ============================================================ */
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar {
+    transition: none;
+  }
+
+  .sidebar-link {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .sidebar {
+    border-right: 2px solid #ffffff;
+  }
+
+  .sidebar-link:focus {
+    outline-width: 3px;
+  }
+}

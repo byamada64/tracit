@@ -1,0 +1,43 @@
+/* ============================================================
+   PAGE CONTAINER COMPONENT STYLES
+   ============================================================ */
+
+.page-container {
+  margin-left: var(--page-margin, 48px);
+  margin-right: var(--page-margin, 48px);
+  margin-top: 32px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ============================================================
+   RESPONSIVE BREAKPOINTS
+   ============================================================ */
+
+/* Tablet: 768px and below */
+@media (max-width: 768px) {
+  .page-container {
+    margin-left: 32px;
+    margin-right: 32px;
+    margin-top: 24px;
+  }
+}
+
+/* Mobile: 640px and below */
+@media (max-width: 640px) {
+  .page-container {
+    margin-left: 16px;
+    margin-right: 16px;
+    margin-top: 20px;
+  }
+}
+
+/* Small Mobile: 480px and below */
+@media (max-width: 480px) {
+  .page-container {
+    margin-left: 12px;
+    margin-right: 12px;
+    margin-top: 16px;
+  }
+}
+

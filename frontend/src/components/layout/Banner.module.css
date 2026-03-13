@@ -1,0 +1,45 @@
+.bannerWrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 96px;
+  margin-bottom: 24px;
+}
+
+.banner {
+  background: var(--banner-background, #d8c9e6);
+  padding: var(--banner-padding, 32px);
+  border-radius: var(--banner-radius, 16px);
+  max-width: var(--banner-max-width, 1400px);
+  width: 100%;
+  margin-left: var(--banner-horizontal-margin, 48px);
+  margin-right: var(--banner-horizontal-margin, 48px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bannerContent {
+  /* Content wrapper - no styles needed but kept for structure */
+}
+
+.bannerTitle {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.bannerDescription {
+  margin: 0;
+  opacity: 0.85;
+  color: #fff;
+  font-size: 14px;
+}
+
+.bannerIcon {
+  font-size: 32px;
+  opacity: 0.9;
+}
+
+

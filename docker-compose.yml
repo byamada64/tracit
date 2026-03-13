@@ -1,0 +1,78 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:15.6
+    container_name: tracit_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tracit_db
+      POSTGRES_USER: tracit
+      POSTGRES_PASSWORD: changeme
+    user: "999:999"
+    volumes:
+      - /volume1/TracIT-Cloud/clients/tracit/database/postgres/data:/var/lib/postgresql/data
+    networks:
+      - tracit-net
+
+  redis:
+    image: redis:7
+    container_name: tracit_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    user: "999:999"
+    volumes:
+      - /volume1/TracIT-Cloud/clients/tracit/storage/data:/data
+    networks:
+      - tracit-net
+
+  backend:
+    build: ./backend
+    container_name: tracit_backend
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tracit_db
+      POSTGRES_USER: tracit
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - /volume1/TracIT-Cloud/clients/tracit/backend:/usr/src/app
+    ports:
+      - "5200:5200"
+    networks:
+      - tracit-net
+    depends_on:
+      - postgres
+      - redis
+
+  frontend:
+    build: ./frontend
+    container_name: tracit_frontend
+    restart: unless-stopped
+    volumes:
+      - /volume1/TracIT-Cloud/clients/tracit/frontend:/usr/src/app
+    ports:
+      - "3000:3000"     # <-- THIS FIXES SAFARI CONNECTION
+    networks:
+      - tracit-net
+    depends_on:
+      - backend
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: tracit_n8n
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      GENERIC_TIMEZONE: America/Los_Angeles
+    volumes:
+      - /volume1/TracIT-Cloud/clients/tracit/automations/n8n:/home/node/.n8n
+    networks:
+      - tracit-net
+
+networks:
+  tracit-net:
+    driver: bridge

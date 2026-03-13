@@ -1,0 +1,24 @@
+.tools-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 32px;
+
+    /* ZERO vertical padding so PageContainer fully controls spacing */
+    padding: 0;
+    padding-left: 8px;
+}
+
+.tool-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    /* FORCE consistent icon / label size */
+    font-size: 20px;
+    line-height: 24px; /* prevents shrinking */
+}
+
+.tool-icon {
+    font-size: 22px;
+}

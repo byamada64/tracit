@@ -1,0 +1,9 @@
+node_modules/
+logs/
+cache/
+.env
+*.log
+Dockerfile.bak*
+docker-compose.yml.bak*
+storage/
+backups/
