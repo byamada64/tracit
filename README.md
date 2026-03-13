@@ -152,7 +152,7 @@ terraform plan -var="environment=staging" -out=tfplan
 terraform apply tfplan
 ```
 
-**CI/CD Pipeline** — GitHub Actions triggers on push:
+### CI/CD Workflow
 
 | Event | Pipeline |
 |---|---|
