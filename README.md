@@ -1,3 +1,15 @@
+# Project Overview
+
+TracIT is a containerized multi-service platform built on a Synology NAS and designed for migration to Azure. The project demonstrates how a lightweight self-hosted system can evolve into a production-style cloud architecture using Infrastructure-as-Code, containerized microservices, and enterprise networking patterns.
+
+The platform simulates a real-world DevOps lifecycle:
+
+Self-Hosted Docker → Secure Edge Ingress → Containerized Services → Infrastructure-as-Code → Azure Hub-and-Spoke Cloud Architecture.
+
+The end goal is a **cost-optimized cloud deployment capable of running ephemeral workloads while maintaining enterprise-grade network isolation and security controls.**
+
+---
+
 # TracIT Platform Architecture
 
 <p align="center">
@@ -11,18 +23,6 @@
 [![Azure](https://img.shields.io/badge/Cloud-Azure-0078D4?logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com)  
 [![Docker](https://img.shields.io/badge/Containers-Docker-2496ED?logo=docker&logoColor=white)](https://docker.com)  
 [![Cloudflare](https://img.shields.io/badge/DNS%2FSSL-Cloudflare-F38020?logo=cloudflare&logoColor=white)](https://cloudflare.com)
-
----
-
-# Project Overview
-
-TracIT is a containerized multi-service platform built on a Synology NAS and designed for migration to Azure. The project demonstrates how a lightweight self-hosted system can evolve into a production-style cloud architecture using Infrastructure-as-Code, containerized microservices, and enterprise networking patterns.
-
-The platform simulates a real-world DevOps lifecycle:
-
-Self-Hosted Docker → Secure Edge Ingress → Containerized Services → Infrastructure-as-Code → Azure Hub-and-Spoke Cloud Architecture.
-
-The end goal is a **cost-optimized cloud deployment capable of running ephemeral workloads while maintaining enterprise-grade network isolation and security controls.**
 
 ---
 
