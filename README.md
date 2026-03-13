@@ -131,7 +131,7 @@ Mitigation: nightly automated `pg_dump` backups.
 **Local (Docker Compose)**
 
 ```bash
-git clone https://github.com/yourusername/tracit-platform.git
+git clone https://github.com/byamada64/tracit.git
 cd tracit-platform
 cp docker/.env.example docker/.env   # fill in secrets
 docker compose -f docker/docker-compose.yml up -d
