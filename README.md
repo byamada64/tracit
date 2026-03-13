@@ -13,7 +13,7 @@ The end goal is a **cost-optimized cloud deployment capable of running ephemeral
 # TracIT Platform Architecture
 
 <p align="center">
-  <img src="docs/tracit-architecture.png" width="900">
+  <img src="docs/tracit-architecture.png" width="800">
 </p>
 
 **A containerized, multi-service job tracking platform demonstrating a full DevOps and cloud infrastructure stack — from self-hosted Docker to Azure Hub-and-Spoke VNet design.**
