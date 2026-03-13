@@ -63,6 +63,33 @@ All cross-spoke traffic is force-tunneled through the hub firewall via User-Defi
 
 ---
 
+## Cost Breakdown
+
+**Current (Self-Hosted)**
+
+| Component | Cost |
+|---|---|
+| Synology NAS power (~15W) | ~$2/mo |
+| Domain + Cloudflare Free | ~$1/mo |
+| **Total** | **~$3/mo** |
+
+**Azure Target (Basic, Single-Region)**
+
+| Component | SKU | Cost |
+|---|---|---|
+| NVA (Ubuntu B1s) | Standard_B1s | ~$8/mo |
+| Azure Container Instances (×3 services) | 1 vCPU / 1.5GB each | ~$88/mo |
+| Azure Database for PostgreSQL | Burstable B1ms | ~$15/mo |
+| Azure Cache for Redis | C0 Basic | ~$16/mo |
+| Application Gateway | Small | ~$25/mo |
+| Azure Container Registry | Basic | ~$5/mo |
+| Storage + Networking | — | ~$5/mo |
+| **Total (Basic)** | | **~$162/mo** |
+
+**Cost decisions:** NVA instead of Azure Firewall saves ~$132/mo. Key Vault Service Endpoint instead of Private Endpoint saves $7.50/mo. Spot instances for ephemeral compute workloads provide ~90% discount on node costs.
+
+---
+
 # Design Decisions
 
 ## Hub-and-Spoke over Flat VNet
@@ -163,59 +190,28 @@ Rollback: redeploy previous image SHA tag from ACR.
 
 ---
 
-## Cost Breakdown
-
-**Current (Self-Hosted)**
-
-| Component | Cost |
-|---|---|
-| Synology NAS power (~15W) | ~$2/mo |
-| Domain + Cloudflare Free | ~$1/mo |
-| **Total** | **~$3/mo** |
-
-**Azure Target (Basic, Single-Region)**
-
-| Component | SKU | Cost |
-|---|---|---|
-| NVA (Ubuntu B1s) | Standard_B1s | ~$8/mo |
-| Azure Container Instances (×3 services) | 1 vCPU / 1.5GB each | ~$88/mo |
-| Azure Database for PostgreSQL | Burstable B1ms | ~$15/mo |
-| Azure Cache for Redis | C0 Basic | ~$16/mo |
-| Application Gateway | Small | ~$25/mo |
-| Azure Container Registry | Basic | ~$5/mo |
-| Storage + Networking | — | ~$5/mo |
-| **Total (Basic)** | | **~$162/mo** |
-
-**Cost decisions:** NVA instead of Azure Firewall saves ~$132/mo. Key Vault Service Endpoint instead of Private Endpoint saves $7.50/mo. Spot instances for ephemeral compute workloads provide ~90% discount on node costs.
-
----
-
 ## Roadmap
 
 **Part I — Always-On Infrastructure**
 
-- [x] Phase 1: Budget alerts and monthly spend caps
-- [x] Phase 2: Hub VNet + hardened Ubuntu NVA + Log Analytics
-- [x] Phase 3: Data Spoke VNet + Key Vault (Service Endpoint)
-- [ ] Phase 4: Management access — Azure Bastion + dedicated Jumpbox VM *(on hold: regional service degradation)*
-- [ ] Phase 5: Azure Policy — allowed VM SKUs, location locks, resource locks on persistent layers
-- [ ] Phase 6: Azure Container Registry (Service Endpoint, locked to Compute Spoke subnet)
-- [ ] Phase 7: Azure PostgreSQL Flexible Server (Private Endpoint)
+- [x] Budget alerts and monthly spend caps
+- [x] Hub-and-Spoke VNet with hardened NVA
+- [x] Azure Policy + resource locks
+- [ ] Private endpoints for persistent services
+- [ ] Phase 5: Azure Policy — allowed VM SKUs, location locks, resource locks on 
 
 **Part II — Ephemeral Compute**
 
-- [ ] Phase 8: Containerize application with Azure SQL driver support
-- [ ] Phase 9: K3s cluster on Azure Spot Instances — Master + Worker, outbound via Hub NVA
-- [ ] Phase 10: GitHub Actions scheduled CI/CD — deploy at trigger, tear down after run; automatic fallback from Spot to On-Demand on capacity failure
+- [ ] Containerized application workloads
+- [ ] K3s cluster on Azure Spot Instances
+- [ ] CI/CD triggered ephemeral deployments
 
 **Part III — Observability and HA**
 
-- [ ] Centralized logging — Azure Monitor + structured JSON from all services
-- [ ] Application Insights — distributed tracing across Frontend → API → DB
-- [ ] Zone-redundant PostgreSQL (primary + standby across AZs)
-- [ ] Azure Front Door replacing App Gateway — WAF + global anycast
-- [ ] Terraform remote state — Azure Blob Storage backend with state locking
-- [ ] Azure Key Vault for secret rotation (replacing static `.env` secrets)
+- [ ] Centralized logging (Azure Monitor)
+- [ ] Distributed tracing (Application Insights)
+- [ ] Zone-redundant PostgreSQL
+- [ ] Secret rotation via Azure Key Vault
 
 ---
 
